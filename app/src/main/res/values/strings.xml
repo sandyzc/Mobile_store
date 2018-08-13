@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">"ITEM CODE "</string>
+    <string name="description">Description</string>
+    <string name="equipment">Equipment</string>
+
+    <string-array name="Department">
+        <item>All</item>
+        <item>Mould Line</item>
+        <item>Core Shop</item>
+        <item>Sand Plant</item>
+        <item>Press pour</item>
+        <item>Fbdc</item>
+        <item>Sew GearBox</item>
+        <item>Electrical</item>
+        <item>De-Dusting</item>
+        <item>Forklift</item>
+        <item>Manipulator</item>
+        <item>General</item>
+        <item>Fiting</item>
+        <item>ccc</item>
+        <item>lpg</item>
+        <item>Cmpressor</item>
+        <item>Dk6</item>
+        <item>Import</item>
+        <item>Hose</item>
+        <item>Upload</item>
+    </string-array>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="interstitial_ad_sample">Interstitial Ad Sample</string>
+    <string name="start_level">Level 1</string>
+    <string name="next_level">Next Level</string>
+    <string name="Error">error</string>
+    <!-- -
+        This is an ad unit ID for an interstitial test ad. Replace with your own interstitial ad unit id.
+        For more information, see https://support.google.com/admob/answer/3052638
+    <!- -->
+    <string name="interstitial_ad_unit_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="logo">logo</string>
+    <string name="by_sandyz_freak_labs">By Sandyz Freak Labs</string>
+    <string name="enter_text_here">Enter Text Here</string>
+    <string name="let_s_search">Let\'s Search</string>
+    <string name="banner_ad_unit_id">ca-app-pub-4711563913796281/1957453895</string>
+
+    <string name="hello_world">Hello world!</string>
+
+
+</resources>

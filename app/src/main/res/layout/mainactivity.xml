@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
+    <ImageView
+        android:contentDescription="@string/logo"
+        android:id="@+id/imageView"
+        android:layout_marginTop="30dp"
+        android:layout_width="239dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/log2o" />
+    <TextView
+        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/by_sandyz_freak_labs"
+        android:gravity="center"
+        android:textAlignment="gravity"
+        android:textStyle="bold"
+        android:textColor="#ffff"
+
+        />
+
+    <TextView
+        android:id="@+id/versi"
+        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAlignment="gravity"
+        android:textStyle="bold"
+        android:textColor="#ffff"
+
+        />
+
+
+    <LinearLayout
+    android:orientation="horizontal"
+    android:layout_marginTop="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+     <EditText
+        android:id="@+id/query_data"
+        android:hint="@string/enter_text_here"
+        android:textColorHint="#ffff"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="50sp"
+        android:background="@drawable/background"
+        android:layout_weight="1"
+        />
+
+</LinearLayout>
+
+    <Button
+        android:id="@+id/searchButton"
+         android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background"
+        android:text="@string/let_s_search"
+        android:textColor="#ffff"
+        android:textStyle="bold"/>
+
+
+
+
+
+
+</LinearLayout>
