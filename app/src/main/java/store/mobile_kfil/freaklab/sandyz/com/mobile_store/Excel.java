@@ -138,10 +138,6 @@ public class Excel extends ListActivity {
                 sheet1 = workbook.getSheetAt(0);
             }
 
-            if (sheet1 == null) {
-                return;
-            }
-            dbAdapter.open();
             dbAdapter.open();
             Excel2SQLiteHelper.insertExcelToSqlite(dbAdapter, sheet1);
 

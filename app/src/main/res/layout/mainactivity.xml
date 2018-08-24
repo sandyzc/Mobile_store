@@ -68,6 +68,14 @@
         android:textColor="#ffff"
         android:textStyle="bold"/>
 
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:padding="50dp"
+        android:id="@+id/main_screen_progressbar"
+        />
 
 
 
