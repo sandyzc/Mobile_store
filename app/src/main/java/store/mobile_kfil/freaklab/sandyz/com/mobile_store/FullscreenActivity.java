@@ -2,6 +2,7 @@ package store.mobile_kfil.freaklab.sandyz.com.mobile_store;
 
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -14,11 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -57,6 +54,8 @@ public class FullscreenActivity extends AppCompatActivity {
 
         progressBar=findViewById(R.id.main_screen_progressbar);
 
+        Thread_try mythread = new Thread_try();
+        mythread.run();
 //        database = FirebaseDatabase.getInstance().getReference("date");
 //
 //        database.addValueEventListener(new ValueEventListener() {
@@ -73,21 +72,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
 
 
-        StorageReference mStorageRef = FirebaseStorage.getInstance().getReferenceFromUrl(FIREBASE_URL);
-        try {
-            final File localFile = File.createTempFile("DATA", ".xls");
-            mStorageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @RequiresApi(api = Build.VERSION_CODES.N)
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    String size = String.valueOf(taskSnapshot.getBytesTransferred()/1024);
-                    Toast.makeText(FullscreenActivity.this, "Downloaded " + size+" MB", Toast.LENGTH_LONG).show();
-                    insertexcelData(localFile.getPath());
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
 
         //displaying app version
         version_info = findViewById(R.id.versi);
@@ -166,6 +151,34 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
 
+
+
+    private class Thread_try extends Thread{
+
+        @Override
+        public void run() {
+            super.run();
+            StorageReference mStorageRef = FirebaseStorage.getInstance().getReferenceFromUrl(FIREBASE_URL);
+            try {
+                final File localFile = File.createTempFile("DATA", ".xls");
+                mStorageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                        String size = String.valueOf(taskSnapshot.getBytesTransferred()/1024);
+                        insertexcelData(localFile.getPath());
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Toast.makeText(FullscreenActivity.this,"Data updated ",Toast.LENGTH_LONG).show();
+
+        }
+    }
+
 }
+
+
 
 
