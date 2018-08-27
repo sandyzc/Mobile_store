@@ -45,16 +45,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-     <EditText
-        android:id="@+id/query_data"
-        android:hint="@string/enter_text_here"
-        android:textColorHint="#ffff"
-        android:gravity="center"
-        android:layout_width="0dp"
-        android:layout_height="50sp"
-        android:background="@drawable/background"
-        android:layout_weight="1"
-        />
+        <EditText
+            android:id="@+id/query_data"
+            android:layout_width="0dp"
+            android:layout_height="50sp"
+            android:layout_weight="1"
+            android:background="@drawable/background"
+            android:gravity="center"
+            android:hint="@string/enter_text_here"
+            android:inputType="text"
+            android:imeActionId="666"
+            android:imeOptions="actionDone"
+            android:textColorHint="#ffff" />
 
 </LinearLayout>
 

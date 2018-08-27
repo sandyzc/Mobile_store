@@ -44,9 +44,11 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 search_Data.setCode(cursor.getString(1));
                 search_Data.setDescp(cursor.getString(2));
                 search_Data.setPip_stock(cursor.getString(3));
-                search_Data.setFdy_stock(cursor.getString(4));
-                search_Data.setPip_location(cursor.getString(5));
-                search_Data.setFdy_location(cursor.getString(6));
+              //  search_Data.setPip_stock_uom(cursor.getString(4));
+                search_Data.setFdy_stock(cursor.getString(5));
+             //   search_Data.setFdy_stock_uom(cursor.getString(6));
+                search_Data.setPip_location(cursor.getString(7));
+                search_Data.setFdy_location(cursor.getString(8));
                 search_result.add(search_Data);
             } while (cursor.moveToNext());
         }

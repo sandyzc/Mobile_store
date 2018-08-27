@@ -33,10 +33,6 @@
             android:label="@string/app_name"
             android:theme="@style/FullscreenTheme" />
         <activity
-            android:name=".Excel"
-            android:label="UPLOAD EXCEL"
-            android:theme="@style/FullscreenTheme" />
-        <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"></activity>
     </application>

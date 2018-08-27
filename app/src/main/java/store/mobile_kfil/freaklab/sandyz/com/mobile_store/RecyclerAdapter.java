@@ -107,8 +107,8 @@ public class RecyclerAdapter extends RecyclerSwipeAdapter<RecyclerAdapter.Viewho
         holder.fdy_stock.setText(codes.getFdy_stock());
         holder.pip_store_location.setText(codes.getPip_location());
         holder.fdy_sore_location.setText(codes.getFdy_location());
-        holder.pip_stock_uom.setText(codes.getPip_stock_uom());
-        holder.fdy_stock_uom.setText(codes.getFdy_stock_uom());
+       // holder.pip_stock_uom.setText(codes.getPip_stock_uom());
+       // holder.fdy_stock_uom.setText(codes.getFdy_stock_uom());
 
     }
 

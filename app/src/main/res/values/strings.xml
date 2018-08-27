@@ -1,30 +1,7 @@
 <resources>
-    <string name="app_name">"ITEM CODE "</string>
+    <string name="app_name">"KFIL MOBILE STORE "</string>
     <string name="description">Description</string>
     <string name="equipment">Equipment</string>
-
-    <string-array name="Department">
-        <item>All</item>
-        <item>Mould Line</item>
-        <item>Core Shop</item>
-        <item>Sand Plant</item>
-        <item>Press pour</item>
-        <item>Fbdc</item>
-        <item>Sew GearBox</item>
-        <item>Electrical</item>
-        <item>De-Dusting</item>
-        <item>Forklift</item>
-        <item>Manipulator</item>
-        <item>General</item>
-        <item>Fiting</item>
-        <item>ccc</item>
-        <item>lpg</item>
-        <item>Cmpressor</item>
-        <item>Dk6</item>
-        <item>Import</item>
-        <item>Hose</item>
-        <item>Upload</item>
-    </string-array>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="title_activity_main2">Main2Activity</string>
