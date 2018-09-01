@@ -13,9 +13,12 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.Toast;
 
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
+import io.fabric.sdk.android.Fabric;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.SlideInBottomAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
@@ -35,6 +38,7 @@ public class SearchButton extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.code_list);
+        Fabric.with(this, new Crashlytics());
 
 
 
@@ -65,8 +69,8 @@ public class SearchButton extends AppCompatActivity {
         slideInRightAnimationAdapter.setDuration(500);
 
 
-        //inttialize the recyler view
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        //initialise the recycler view
+        recyclerView = findViewById(R.id.recycler_view);
 
 
         //add animator to the view

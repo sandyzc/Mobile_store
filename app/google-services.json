@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "268256806988-8ndqmsfilclmqjdpa92kkt6jemh3rq0o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "store.mobile_kfil.freaklab.sandyz.com.mobile_store",
+            "certificate_hash": "d41b8e9fe29ed45d3a2d84bd97c1fdd77a560838"
+          }
+        },
+        {
           "client_id": "268256806988-2qc7hgjbnlsgifvh2oetvmq77f9b4q32.apps.googleusercontent.com",
           "client_type": 3
         }

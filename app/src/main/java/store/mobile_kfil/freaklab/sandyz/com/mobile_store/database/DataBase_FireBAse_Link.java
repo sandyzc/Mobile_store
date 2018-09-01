@@ -81,7 +81,7 @@ public class DataBase_FireBAse_Link extends SQLiteOpenHelper {
             ContentValues values=new ContentValues();
             values.put(link,LINK);
 
-            database.update(Table_NAME,values,id+" ?",new String[]{String.valueOf(1)});
+            database.update(Table_NAME,values,"_id = ?",new String[]{String.valueOf(1)});
 
         }
 

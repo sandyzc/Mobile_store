@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,7 +39,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
+import io.fabric.sdk.android.Fabric;
 import store.mobile_kfil.freaklab.sandyz.com.mobile_store.database.DataBase_FireBAse_Link;
+import store.mobile_kfil.freaklab.sandyz.com.mobile_store.database.DatabaseOpenHelper;
 import store.mobile_kfil.freaklab.sandyz.com.mobile_store.database.XlsConec;
 
 
@@ -50,9 +53,8 @@ public class FullscreenActivity extends AppCompatActivity {
     Button searc_Button;
     TextView version_info;
     ProgressBar progressBar;
-
-
-
+    XlsConec dataXlsConec;
+    DatabaseOpenHelper mydata;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -60,6 +62,11 @@ public class FullscreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainactivity);
+        Fabric.with(this, new Crashlytics());
+
+
+        mydata=new DatabaseOpenHelper(this);
+        dataXlsConec=new XlsConec(this);
 
         progressBar = findViewById(R.id.main_screen_progressbar);
 
@@ -74,35 +81,38 @@ public class FullscreenActivity extends AppCompatActivity {
         final DataBase_FireBAse_Link fireBAse_link = new DataBase_FireBAse_Link(this);
 
 
-
-        FirebaseDatabase myFirebaseDatabase= FirebaseDatabase.getInstance();
-        DatabaseReference myDatabaseReference=myFirebaseDatabase.getReference("DB_LINK");
+        FirebaseDatabase myFirebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference myDatabaseReference = myFirebaseDatabase.getReference("DB_LINK");
         //get data from firebasae dataBase for the link of the excel file
         myDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                String FIREBASE_URL=dataSnapshot.getValue(String.class);
+                String FIREBASE_URL = dataSnapshot.getValue(String.class);
                 //getting the link from db
                 String link_in_db = fireBAse_link.get_FIREBASE_link();
                 //check weather launching app for firat time ...if yes save the db link into the DataBAse so that no duplicates is saved
-                if (fireBAse_link.get_FIREBASE_link()==null){
+                if (fireBAse_link.get_FIREBASE_link() == null) {
                     fireBAse_link.save_FIREBASE_LINK(FIREBASE_URL);
 
                     getDataFromFireBase(FIREBASE_URL);
                     progressBar.setVisibility(View.INVISIBLE);
                 }
                 //check weather the file is already downloaded if yes user will know
-               else if (link_in_db.equals(FIREBASE_URL)){
-                    Toast.makeText(FullscreenActivity.this," DATA IS UPDATED",Toast.LENGTH_LONG).show();
+                else if (link_in_db.equals(FIREBASE_URL)) {
+                    Toast.makeText(FullscreenActivity.this, " DATA IS UPDATED", Toast.LENGTH_LONG).show();
                 }
                 //if new update is available its link is updated in DB
                 else {
                     fireBAse_link.updae_FIREBASE_LINK(FIREBASE_URL);
+                    dataXlsConec.deleteData();
                     getDataFromFireBase(FIREBASE_URL);
                     progressBar.setVisibility(View.INVISIBLE);
                 }
+
+
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -113,8 +123,8 @@ public class FullscreenActivity extends AppCompatActivity {
         searchData.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                boolean handled=false;
-                if (i== EditorInfo. IME_ACTION_DONE){
+                boolean handled = false;
+                if (i == EditorInfo.IME_ACTION_DONE) {
                     doMagic();
                 }
                 return handled;
@@ -131,7 +141,7 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     private void insertexcelData(final String FilePath) {
-        Thread thread = new Thread() {
+         final Thread thread = new Thread() {
 
             Context mycontext = FullscreenActivity.this;
 
@@ -165,18 +175,18 @@ public class FullscreenActivity extends AppCompatActivity {
                     ex.printStackTrace();
                 }
             }
+
         };
+
         thread.start();
-        if (thread.isInterrupted()) {
-            Toast.makeText(FullscreenActivity.this, "upload interepted ", Toast.LENGTH_LONG).show();
-        }
     }
+
 
     private void getDataFromFireBase(String FIREBASE_URL) {
 
         StorageReference mStorageRef = FirebaseStorage.getInstance().getReferenceFromUrl(FIREBASE_URL);
         try {
-            final File localFile = File.createTempFile("DATA", ".xls");
+            final File localFile = File.createTempFile("ItemCode", ".db");
             mStorageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
@@ -184,7 +194,12 @@ public class FullscreenActivity extends AppCompatActivity {
 
                     String size = String.valueOf(taskSnapshot.getTotalByteCount() / 1000000);
                     Toast.makeText(FullscreenActivity.this, "Downloaded " + size + " MB", Toast.LENGTH_LONG).show();
-                    insertexcelData(localFile.getPath());
+                    try {
+                        mydata.updateDatabaseFromFireBase(localFile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    // insertexcelData(localFile.getPath());
                 }
             }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
@@ -194,19 +209,25 @@ public class FullscreenActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.VISIBLE);
                     progressBar.setProgress(currentprogress);
 
+
                 }
             });
+            progressBar.setVisibility(View.GONE);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void doMagic(){
+    private void doMagic() {
 
         if (searchData.getText().length() <= 0) {
             searchData.setError("Enter KeyWOrd");
-        } else {
+        }
+        if (mydata.dataLength()<1){
+            Toast.makeText(this,"PLease wait data to upload",Toast.LENGTH_SHORT).show();
+        }
+        else {
 
             Intent letsSearch = new Intent(FullscreenActivity.this, SearchButton.class);
             Bundle data = new Bundle();

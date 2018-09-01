@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#333335</color>
-    <color name="colorPrimaryDark">#333335</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#060606</color>
+    <color name="colorPrimaryDark">#040404</color>
+    <color name="colorAccent">#09972c</color>
 
     <color name="black_overlay">#66000000</color>
 
@@ -12,4 +12,7 @@
     <color name="red_press">#990000</color>
     <color name="dark_gray">#4C535B</color>
     <color name="dark_gray_press">#ff7e8a97</color>
+    <color name="grey_100">#F5F5F5</color>
+    <color name="grey_300">#E0E0E0</color>
+    <color name="grey_500">#9E9E9E</color>
 </resources>

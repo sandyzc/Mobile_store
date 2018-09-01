@@ -106,6 +106,10 @@ public class XlsConec extends SQLiteOpenHelper {
         cursor.close();
         return codeList;
     }
+    public void deleteData(){
+        database=this.getWritableDatabase();
+        this.database.delete(TableName,null,null);
+    }
 
 }
 
