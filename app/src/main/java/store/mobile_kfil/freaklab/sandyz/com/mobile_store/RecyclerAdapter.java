@@ -87,10 +87,23 @@ public class RecyclerAdapter extends RecyclerSwipeAdapter<RecyclerAdapter.Viewho
             public void onClick(View view) {
                 String code = codes.getCode();
                 String desc = codes.getDescp();
+                String pip_Location=codes.getPip_location();
+                String pip_stock=codes.getPip_stock();
+                String fdy_Location=codes.getFdy_location();
+                String fdy_stock=codes.getFdy_stock();
 
                 Intent share = new Intent();
                 share.setAction(Intent.ACTION_SEND);
-                share.putExtra(Intent.EXTRA_TEXT, code + "\n" + desc);
+                share.putExtra(Intent.EXTRA_TEXT, code + "\n" + desc+"\n"+"Pip Stock = "
+                        +pip_stock
+                        +"-- "
+                        +pip_Location
+                        +"\n"
+                        +"Fdy Stock = "
+                        +fdy_stock
+                        +"-- "
+                        +fdy_Location
+                                        );
                 share.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 share.setType("text/plain");
 
@@ -107,8 +120,6 @@ public class RecyclerAdapter extends RecyclerSwipeAdapter<RecyclerAdapter.Viewho
         holder.fdy_stock.setText(codes.getFdy_stock());
         holder.pip_store_location.setText(codes.getPip_location());
         holder.fdy_sore_location.setText(codes.getFdy_location());
-       // holder.pip_stock_uom.setText(codes.getPip_stock_uom());
-       // holder.fdy_stock_uom.setText(codes.getFdy_stock_uom());
 
     }
 

@@ -18,7 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,7 +43,6 @@ import java.util.Objects;
 
 import io.fabric.sdk.android.Fabric;
 import store.mobile_kfil.freaklab.sandyz.com.mobile_store.database.DataBase_FireBAse_Link;
-import store.mobile_kfil.freaklab.sandyz.com.mobile_store.database.DatabaseOpenHelper;
 import store.mobile_kfil.freaklab.sandyz.com.mobile_store.database.XlsConec;
 
 
@@ -54,7 +55,10 @@ public class FullscreenActivity extends AppCompatActivity {
     TextView version_info;
     ProgressBar progressBar;
     XlsConec dataXlsConec;
-    DatabaseOpenHelper mydata;
+    MyService uploadService;
+    private boolean isBound;
+
+
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -65,7 +69,7 @@ public class FullscreenActivity extends AppCompatActivity {
         Fabric.with(this, new Crashlytics());
 
 
-        mydata=new DatabaseOpenHelper(this);
+
         dataXlsConec=new XlsConec(this);
 
         progressBar = findViewById(R.id.main_screen_progressbar);
@@ -95,7 +99,11 @@ public class FullscreenActivity extends AppCompatActivity {
                 if (fireBAse_link.get_FIREBASE_link() == null) {
                     fireBAse_link.save_FIREBASE_LINK(FIREBASE_URL);
 
-                    getDataFromFireBase(FIREBASE_URL);
+                    try {
+                        getDataFromFireBase(FIREBASE_URL);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     progressBar.setVisibility(View.INVISIBLE);
                 }
                 //check weather the file is already downloaded if yes user will know
@@ -106,7 +114,11 @@ public class FullscreenActivity extends AppCompatActivity {
                 else {
                     fireBAse_link.updae_FIREBASE_LINK(FIREBASE_URL);
                     dataXlsConec.deleteData();
-                    getDataFromFireBase(FIREBASE_URL);
+                    try {
+                        getDataFromFireBase(FIREBASE_URL);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     progressBar.setVisibility(View.INVISIBLE);
                 }
 
@@ -182,41 +194,53 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
 
-    private void getDataFromFireBase(String FIREBASE_URL) {
+    private void getDataFromFireBase(String FIREBASE_URL) throws IOException {
 
         StorageReference mStorageRef = FirebaseStorage.getInstance().getReferenceFromUrl(FIREBASE_URL);
-        try {
-            final File localFile = File.createTempFile("ItemCode", ".db");
-            mStorageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @RequiresApi(api = Build.VERSION_CODES.N)
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+        final File localFile = File.createTempFile("data","xls");
+        mStorageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
 
-                    String size = String.valueOf(taskSnapshot.getTotalByteCount() / 1000000);
-                    Toast.makeText(FullscreenActivity.this, "Downloaded " + size + " MB", Toast.LENGTH_LONG).show();
-                    try {
-                        mydata.updateDatabaseFromFireBase(localFile);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    // insertexcelData(localFile.getPath());
+                String size = String.valueOf(taskSnapshot.getTotalByteCount() / 1000000);
+                Toast.makeText(FullscreenActivity.this, "Downloaded " + size + " MB", Toast.LENGTH_LONG).show();
+                uploadService.insertexcelData(localFile.getPath());
+            }
+        }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                int currentprogress = (int) progress;
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(currentprogress);
+
+                if (currentprogress==100){
+                    progressBar.setVisibility(View.GONE);
                 }
-            }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    int currentprogress = (int) progress;
-                    progressBar.setVisibility(View.VISIBLE);
-                    progressBar.setProgress(currentprogress);
+
+            }
+        });
 
 
-                }
-            });
-            progressBar.setVisibility(View.GONE);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    }
+    // we dont want to finish the activity we instead put it into pause
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 
+    private void bindToService(){
+            Intent bindIntent= new Intent(this,MyService.class);
+            startService(bindIntent);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        bindToService();
     }
 
     private void doMagic() {
@@ -224,8 +248,8 @@ public class FullscreenActivity extends AppCompatActivity {
         if (searchData.getText().length() <= 0) {
             searchData.setError("Enter KeyWOrd");
         }
-        if (mydata.dataLength()<1){
-            Toast.makeText(this,"PLease wait data to upload",Toast.LENGTH_SHORT).show();
+        else if (dataXlsConec.getCodes().size()<1){
+            Toast.makeText(this,"Please wait data to upload",Toast.LENGTH_SHORT).show();
         }
         else {
 

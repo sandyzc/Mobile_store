@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
+import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 import store.mobile_kfil.freaklab.sandyz.com.mobile_store.Beans;
 
 
-public class DatabaseOpenHelper extends SQLiteOpenHelper {
+public class DatabaseOpenHelper extends SQLiteAssetHelper {
     private static String DATABASE_NAME = "ItemCode.db";
     private static final int DATABASE_VERSION = 1;
     private static final String TableName = "ItemCode";
@@ -27,6 +29,11 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     private static String DB_PATH = "";
     Context myContext;
     int data;
+
+    public DatabaseOpenHelper(Context context, String storageDirectory) {
+        super(context, DATABASE_NAME, storageDirectory,null, DATABASE_VERSION);
+        this.myContext = context;
+    }
 
     public DatabaseOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -114,10 +121,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
-    }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
