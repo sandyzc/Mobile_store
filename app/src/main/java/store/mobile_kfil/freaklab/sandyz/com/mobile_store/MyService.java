@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.RequiresApi;
 import android.view.View;
@@ -32,7 +33,7 @@ public class MyService extends Service {
 
     private final IBinder locIBinder = new MyLocalBinder();
     private boolean isBound;
-
+    Context mycontext = this;
 
     public MyService() {
     }
@@ -44,6 +45,14 @@ public class MyService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+
+        String localPAth = intent.getStringExtra("localPath");
+        if (localPAth != null) {
+            Toast.makeText(this, "Updating the data....!", Toast.LENGTH_LONG).show();
+            insertexcelData(localPAth);
+        }
+
         return START_STICKY;
 
     }
@@ -51,19 +60,19 @@ public class MyService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this,"Application Closed....!",Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Application Closed....!", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+
     }
 
     public void insertexcelData(final String FilePath) {
         final Thread thread = new Thread() {
 
-            Context mycontext = getApplicationContext();
 
             @Override
             public void run() {
@@ -102,9 +111,8 @@ public class MyService extends Service {
     }
 
 
-
-    public class MyLocalBinder extends Binder{
-        MyService getMyService(){
+    public class MyLocalBinder extends Binder {
+        MyService getMyService() {
 
             return MyService.this;
         }

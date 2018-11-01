@@ -55,10 +55,6 @@ public class FullscreenActivity extends AppCompatActivity {
     TextView version_info;
     ProgressBar progressBar;
     XlsConec dataXlsConec;
-    MyService uploadService;
-    private boolean isBound;
-
-
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -107,7 +103,7 @@ public class FullscreenActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.INVISIBLE);
                 }
                 //check weather the file is already downloaded if yes user will know
-                else if (link_in_db.equals(FIREBASE_URL)) {
+                else if (link_in_db.equals(FIREBASE_URL)&&dataXlsConec.getCodes().size()<30000) {
                     Toast.makeText(FullscreenActivity.this, " DATA IS UPDATED", Toast.LENGTH_LONG).show();
                 }
                 //if new update is available its link is updated in DB
@@ -205,7 +201,8 @@ public class FullscreenActivity extends AppCompatActivity {
 
                 String size = String.valueOf(taskSnapshot.getTotalByteCount() / 1000000);
                 Toast.makeText(FullscreenActivity.this, "Downloaded " + size + " MB", Toast.LENGTH_LONG).show();
-                uploadService.insertexcelData(localFile.getPath());
+
+                bindToService(localFile.getPath());
             }
         }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
             @Override
@@ -230,18 +227,16 @@ public class FullscreenActivity extends AppCompatActivity {
         moveTaskToBack(true);
     }
 
-    private void bindToService(){
+    private void bindToService( String filePath){
+            //send the downloaded file path to service
+
             Intent bindIntent= new Intent(this,MyService.class);
+            bindIntent.putExtra("localPath",filePath);
             startService(bindIntent);
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
 
-        bindToService();
-    }
 
     private void doMagic() {
 
