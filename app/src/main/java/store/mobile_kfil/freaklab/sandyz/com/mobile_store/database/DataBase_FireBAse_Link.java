@@ -14,7 +14,8 @@ public class DataBase_FireBAse_Link extends SQLiteOpenHelper {
     private static final String Table_NAME="FIREBASE_LINK";
     private static final String id = "_id";
     private static final int Version=1;
-    private static final String link = "link";
+    private static final String EXCEL_link = "link";
+    private static final String Db_Link="Db_link";
     private static final int DATABASE_VERSION = 1;
     SQLiteDatabase database;
 
@@ -31,7 +32,8 @@ public class DataBase_FireBAse_Link extends SQLiteOpenHelper {
                 Table_NAME+
                 "("+
                 id+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                link+" TEXT)"
+                Db_Link+"TEXT"+
+                EXCEL_link+" TEXT)"
         );
 
     }
@@ -44,8 +46,7 @@ public class DataBase_FireBAse_Link extends SQLiteOpenHelper {
 
     }
 
-    public String get_FIREBASE_link(){
-        int idd=1;
+    public String get_EXCEL_FIREBASE_link(){
         database=this.getReadableDatabase();
         String selectQuery = "SELECT  * FROM " + Table_NAME;
         Cursor cursor=database.rawQuery(selectQuery,null);
@@ -64,26 +65,66 @@ public class DataBase_FireBAse_Link extends SQLiteOpenHelper {
 
 
 
-        public void save_FIREBASE_LINK(String LINK){
+        public void save_EXCEL_FIREBASE_LINK(String LINK){
         database=this.getWritableDatabase();
 
             ContentValues values=new ContentValues();
-            values.put(link,LINK);
+            values.put(EXCEL_link,LINK);
 
             this.database.insert(Table_NAME,null,values);
 
         }
 
-        public void updae_FIREBASE_LINK(String LINK){
+        public void updae_EXCEL_FIREBASE_LINK(String LINK){
 
             database=this.getWritableDatabase();
 
             ContentValues values=new ContentValues();
-            values.put(link,LINK);
+            values.put(EXCEL_link,LINK);
 
             database.update(Table_NAME,values,"_id = ?",new String[]{String.valueOf(1)});
 
         }
+
+    public String get_DB_FIREBASE_link(){
+        database=this.getReadableDatabase();
+        String selectQuery = "SELECT  * FROM " + Table_NAME;
+        Cursor cursor=database.rawQuery(selectQuery,null);
+
+        String result=null;
+        if (cursor.moveToFirst()) {
+            do {
+                result = cursor.getString(2);
+            }while (cursor.moveToNext());
+
+        }
+        // cursor.close();
+
+        return result;
+    }
+
+
+
+    public void save_DB_FIREBASE_LINK(String LINK){
+        database=this.getWritableDatabase();
+
+        ContentValues values=new ContentValues();
+        values.put(Db_Link,LINK);
+
+        this.database.insert(Table_NAME,null,values);
+
+    }
+
+    public void updae_DB_FIREBASE_LINK(String LINK){
+
+        database=this.getWritableDatabase();
+
+        ContentValues values=new ContentValues();
+        values.put(Db_Link,LINK);
+
+        database.update(Table_NAME,values,"_id = ?",new String[]{String.valueOf(2)});
+
+    }
 
 
     }
