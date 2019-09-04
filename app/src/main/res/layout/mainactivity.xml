@@ -63,6 +63,8 @@
             android:layout_marginRight="5dp"
             android:imeActionId="666"
             android:imeOptions="actionDone"
+            android:textColor="#ffff"
+            android:textStyle="bold"
             android:textColorHint="#ffff" />
 
 </LinearLayout>

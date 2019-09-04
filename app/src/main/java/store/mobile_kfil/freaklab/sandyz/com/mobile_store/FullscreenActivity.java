@@ -81,12 +81,7 @@ public class FullscreenActivity extends AppCompatActivity {
         searchData = findViewById(R.id.query_data);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
-
-        if (Integer.parseInt(BuildConfig.VERSION_NAME)<=1.1){
-            getExcelFile();
-        }else {
-            getDbFile();
-        }
+        getDbFile();
 
         searchData.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
@@ -126,6 +121,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
 
                 if (fireBAse_link.get_DB_FIREBASE_link()==null) {
+
                     fireBAse_link.save_DB_FIREBASE_LINK(FireBase_url);
 
                     try {
@@ -154,37 +150,6 @@ public class FullscreenActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    //method to be used if downloading spreadsheet from server
-    private void getDataFromFireBase(String FIREBASE_URL) throws IOException {
-
-        StorageReference mStorageRef = FirebaseStorage.getInstance().getReferenceFromUrl(FIREBASE_URL);
-        final File localFile = File.createTempFile("data","xls");
-        mStorageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-
-                String size = String.valueOf(taskSnapshot.getTotalByteCount() / 1000000);
-                Toast.makeText(FullscreenActivity.this, "Downloaded " + size + " MB", Toast.LENGTH_LONG).show();
-
-                bindToService(localFile.getPath());
-            }
-        }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                int currentprogress = (int) progress;
-                progressBar.setVisibility(View.VISIBLE);
-                progressBar.setProgress(currentprogress);
-
-                if (currentprogress==100){
-                    progressBar.setVisibility(View.GONE);
-                }
-
-            }
-        });
     }
 
     //method to be used if downloading direct db file from server
@@ -230,14 +195,6 @@ public class FullscreenActivity extends AppCompatActivity {
         moveTaskToBack(true);
     }
 
-    private void bindToService( String filePath){
-            //send the downloaded file path to service
-
-            Intent bindIntent= new Intent(this,MyService.class);
-            bindIntent.putExtra("localPath",filePath);
-            startService(bindIntent);
-
-    }
 
 
     //method to search the keyword
@@ -260,102 +217,6 @@ public class FullscreenActivity extends AppCompatActivity {
         }
 
     }
-
-    //for downloading the excel sheet
-    private void getExcelFile(){
-
-
-
-        FirebaseDatabase myFirebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference myDatabaseReference = myFirebaseDatabase.getReference("DB_LINK");
-        //get data from firebasae dataBase for the link of the excel file
-        myDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                String FIREBASE_URL = dataSnapshot.getValue(String.class);
-                //getting the link from db
-                String link_in_db = fireBAse_link.get_EXCEL_FIREBASE_link();
-                //check weather launching app for firat time ...if yes save the db link into the DataBAse so that no duplicates is saved
-                if (fireBAse_link.get_EXCEL_FIREBASE_link() == null) {
-                    fireBAse_link.save_EXCEL_FIREBASE_LINK(FIREBASE_URL);
-
-                    try {
-                        getDataFromFireBase(FIREBASE_URL);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-                //check weather the file is already downloaded if yes user will know
-                else if (link_in_db.equals(FIREBASE_URL)&&dataXlsConec.getCodes().size()<30000) {
-                    Toast.makeText(FullscreenActivity.this, " DATA IS UPDATED", Toast.LENGTH_LONG).show();
-                }
-                //if new update is available its link is updated in DB
-                else {
-                    fireBAse_link.updae_EXCEL_FIREBASE_LINK(FIREBASE_URL);
-                    dataXlsConec.deleteData();
-                    try {
-                        getDataFromFireBase(FIREBASE_URL);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-
-
-            }
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-    //for later implementation
-    private void insertexcelData(final String FilePath) {
-        final Thread thread = new Thread() {
-
-            Context mycontext = FullscreenActivity.this;
-
-            @Override
-            public void run() {
-                super.run();
-
-                try {
-                    AssetManager am = mycontext.getAssets();
-                    InputStream inStream;
-                    Workbook wb = null;
-                    try {
-                        inStream = new FileInputStream(FilePath);
-                        wb = new HSSFWorkbook(inStream);
-                        inStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    XlsConec dbAdapter = new XlsConec(mycontext);
-                    Sheet sheet1 = null;
-                    if (wb != null) {
-                        sheet1 = wb.getSheetAt(0);
-                    }
-                    if (sheet1 == null) {
-                        return;
-                    }
-                    dbAdapter.open();
-                    Excel2SQLiteHelper.insertExcelToSqlite(dbAdapter, sheet1);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-
-        };
-
-        thread.start();
-    }
-
 
 
 }
